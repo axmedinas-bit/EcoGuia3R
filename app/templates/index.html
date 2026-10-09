@@ -1,0 +1,99 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Sugerencias de reciclaje</h1>
+
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <p>{{ messages[0] }}</p>
+    {% endif %}
+  {% endwith %}
+
+    <h2>¿Por qué reciclar?</h2>
+  <p>
+    Cada día generamos muchísima basura, y buena parte de ella termina en
+    rellenos sanitarios o contaminando ríos y calles. Reciclar permite darles
+    una segunda vida a materiales como el papel, el plástico, el vidrio y el
+    metal. Así se ahorran recursos naturales, se gasta menos energía en fabricar
+    productos nuevos y se reduce la cantidad de residuos que se desechan.
+  </p>
+
+  <h2>¿Qué se puede reciclar?</h2>
+  <ul>
+    <li><strong>Papel y cartón:</strong> hojas, periódicos, cajas y empaques de cartón limpios y secos.</li>
+    <li><strong>Plástico:</strong> botellas, envases y tapas, vacíos y enjuagados.</li>
+    <li><strong>Vidrio:</strong> botellas y frascos, sin tapas.</li>
+    <li><strong>Metal:</strong> latas de aluminio y de conservas, vacías y enjuagadas.</li>
+  </ul>
+
+  <h2>¿Cómo separar los residuos?</h2>
+  <p>
+    Una forma sencilla de empezar es separar en tres grupos:
+  </p>
+  <ul>
+    <li><strong>Aprovechables:</strong> papel, cartón, plástico, vidrio y metal limpios.</li>
+    <li><strong>Orgánicos:</strong> restos de comida, cáscaras y residuos de jardín.</li>
+    <li><strong>No aprovechables:</strong> servilletas sucias, papel higiénico, envolturas muy sucias y similares.</li>
+  </ul>
+  <p>
+    Las reglas y los colores de las canecas cambian según la ciudad, así que
+    conviene consultar las indicaciones de tu localidad.
+  </p>
+
+  <h2>Tres consejos prácticos</h2>
+  <ol>
+    <li>Enjuaga los envases para quitarles restos de comida antes de guardarlos.</li>
+    <li>Aplasta botellas y cajas para que ocupen menos espacio.</li>
+    <li>No mezcles residuos con comida o líquidos: un solo envase sucio puede arruinar material limpio.</li>
+  </ol>
+
+  <p>
+    ¿Tienes una sugerencia para mejorar nuestro sitio o promover el reciclaje?
+    Déjanos tu mensaje.
+  </p>
+
+  <form method="post" action="{{ url_for('create_suggestion') }}">
+
+    <div>
+      <label for="nombre">Nombre</label><br>
+      <input
+        type="text"
+        id="nombre"
+        name="nombre"
+        required
+      >
+    </div>
+
+    <br>
+
+    <div>
+      <label for="correo">Correo electrónico</label><br>
+      <input
+        type="email"
+        id="correo"
+        name="correo"
+        required
+      >
+    </div>
+
+    <br>
+
+    <div>
+      <label for="mensaje">Mensaje</label><br>
+      <textarea
+        id="mensaje"
+        name="mensaje"
+        rows="5"
+        required
+      ></textarea>
+    </div>
+
+    <br>
+
+    <button type="submit">Enviar sugerencia</button>
+
+  </form>
+{% endblock %}
+```
+

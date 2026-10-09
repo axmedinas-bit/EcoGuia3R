@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es">
+  {% include "partials/head.html" %}
+  <body>
+    <nav class="admin-nav">
+      <a class="brand" href="{{ url_for('index') }}">🌱 Ecoguía</a>
+      <a href="{{ url_for('index') }}">Inicio</a>
+      {% if session.get("admin_id") %}
+        <a href="{{ url_for('panel') }}">Panel</a>
+        <a href="{{ url_for('logout') }}">Cerrar sesión</a>
+      {% else %}
+        <a href="{{ url_for('login') }}">Acceso administrador</a>
+      {% endif %}
+    </nav>
+
+    {% block content %}
+    {% endblock %}
+  </body>
+</html>

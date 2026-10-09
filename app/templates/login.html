@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Acceso de administrador</h1>
+
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <p>{{ messages[0] }}</p>
+    {% endif %}
+  {% endwith %}
+
+  <form method="post" action="{{ url_for('login') }}">
+    <p>
+      <label for="usuario">Usuario</label><br>
+      <input type="text" id="usuario" name="usuario" required>
+    </p>
+
+    <p>
+      <label for="contrasena">Contraseña</label><br>
+      <input type="password" id="contrasena" name="contrasena" required>
+    </p>
+
+    <button type="submit">Entrar</button>
+  </form>
+{% endblock %}

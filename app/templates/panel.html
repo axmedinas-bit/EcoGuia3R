@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Panel de administrador</h1>
+
+  <p>
+    <a href="{{ url_for('index') }}">Ir a la página principal</a> |
+    <a href="{{ url_for('logout') }}">Cerrar sesión</a>
+  </p>
+
+  <h2>Sugerencias recibidas ({{ sugerencias|length }})</h2>
+
+  {% if sugerencias %}
+    <table border="1" cellpadding="6" cellspacing="0">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Correo</th>
+          <th>Mensaje</th>
+          <th>Fecha (UTC)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in sugerencias %}
+          <tr>
+            <td>{{ s[0] }}</td>
+            <td>{{ s[1] }}</td>
+            <td>{{ s[2] }}</td>
+            <td>{{ s[3] }}</td>
+            <td>{{ s[4] }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>Todavía no hay sugerencias.</p>
+  {% endif %}
+{% endblock %}
