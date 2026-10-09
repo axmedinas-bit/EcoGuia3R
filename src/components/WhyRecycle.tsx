@@ -117,8 +117,8 @@ export const WhyRecycle: React.FC = () => {
             <rect x="20" y="123" width="860" height="5" rx="2.5" fill="#A5D6A7" />
 
             {/* Carretera asfaltada continua donde circula el camión */}
-            <rect x="160" y="126" width="560" height="20" rx="4" fill="url(#roadGrad)" />
-            <line x1="175" y1="136" x2="705" y2="136" stroke="#FFD54F" strokeWidth="2.5" strokeDasharray="16 12" />
+            <rect x="150" y="126" width="600" height="20" rx="4" fill="url(#roadGrad)" />
+            <line x1="165" y1="136" x2="735" y2="136" stroke="#FFD54F" strokeWidth="2.5" strokeDasharray="16 12" />
 
             {/* ================= ETAPA 1: HOGAR / ORIGEN ================= */}
             <g transform="translate(45, 0)">
@@ -158,57 +158,68 @@ export const WhyRecycle: React.FC = () => {
               </text>
             </g>
 
-            {/* Flecha Curva de Flujo 1 (Desde el hogar hacia el camión) */}
-            <path className="anim-dash-flow" d="M 185 68 C 260 22, 335 22, 395 68" stroke="#4CAF50" strokeWidth="3" fill="none" strokeDasharray="6 6" />
-            <polygon points="390,58 406,69 388,76" fill="#4CAF50" />
+            {/* Flecha Curva de Flujo 1 (Desde el hogar hacia el camión central) */}
+            <path className="anim-dash-flow" d="M 185 68 C 250 25, 320 25, 375 66" stroke="#4CAF50" strokeWidth="3" fill="none" strokeDasharray="6 6" />
+            <polygon points="371,59 383,67 371,75" fill="#4CAF50" />
 
-            {/* ================= ETAPA 2: CAMIÓN DE RECOLECCIÓN ================= */}
-            {/* El camión está posicionado en la calle, con las ruedas sobre el asfalto (y=136) y su techo a y=78, debajo del techo de la casa */}
-            <g transform="translate(390, 74)" className="anim-truck-bob">
-              {/* Sombra de ruedas sobre el asfalto */}
-              <ellipse cx="62" cy="62" rx="58" ry="4" fill="#000000" opacity="0.35" />
+            {/* ================= ETAPA 2: CAMIÓN DE RECOLECCIÓN (CENTRADO EXACTO) ================= */}
+            {/* El camión está posicionado en el centro exacto (X=450, Y=74) sobre el asfalto */}
+            <g transform="translate(392, 74)">
+              {/* Animación suave de desplazamiento vertical SVG nativo sin alterar coordenadas X */}
+              <g>
+                <animateTransform
+                  attributeName="transform"
+                  type="translate"
+                  values="0,0; 0,-2; 0,0"
+                  dur="2.5s"
+                  repeatCount="indefinite"
+                />
 
-              {/* Caja compactadora de reciclaje */}
-              <rect x="0" y="8" width="78" height="44" rx="6" fill="url(#truckBodyGrad)" stroke="#004D40" strokeWidth="2" />
-              
-              {/* Moldura superior de la caja */}
-              <path d="M0 14 Q39 6 78 14 L78 20 L0 20 Z" fill="#00897B" />
+                {/* Sombra de ruedas sobre el asfalto */}
+                <ellipse cx="58" cy="62" rx="58" ry="4" fill="#000000" opacity="0.35" />
 
-              {/* Emblema con símbolo de reciclaje */}
-              <circle cx="39" cy="31" r="14" fill="#FFFFFF" stroke="#80CBC4" strokeWidth="1.5" />
-              <text x="39" y="37" textAnchor="middle" fontSize="18" fill="#00796B" fontWeight="bold">♻</text>
+                {/* Caja compactadora de reciclaje */}
+                <rect x="0" y="8" width="78" height="44" rx="6" fill="url(#truckBodyGrad)" stroke="#004D40" strokeWidth="2" />
+                
+                {/* Moldura superior de la caja */}
+                <path d="M0 13 Q39 6 78 13 L78 17 L0 17 Z" fill="#00897B" />
 
-              {/* Cinta reflectiva trasera */}
-              <rect x="-3" y="24" width="3" height="22" rx="1" fill="#FFC107" />
+                {/* Emblema con símbolo de reciclaje perfectamente centrado en la caja */}
+                <circle cx="39" cy="30" r="13" fill="#FFFFFF" stroke="#80CBC4" strokeWidth="1.5" />
+                <text x="39" y="30" textAnchor="middle" dominantBaseline="central" fontSize="16" fill="#00796B" fontWeight="bold">♻</text>
 
-              {/* Cabina delantera del camión */}
-              <rect x="78" y="18" width="38" height="34" rx="5" fill="url(#truckCabGrad)" stroke="#E65100" strokeWidth="1.5" />
-              
-              {/* Parabrisas y ventana */}
-              <path d="M82 22 L105 22 C109 22 112 25 112 29 L112 35 L82 35 Z" fill="#E1F5FE" stroke="#0288D1" strokeWidth="1" />
-              
-              {/* Línea de puerta y manija */}
-              <line x1="94" y1="35" x2="94" y2="52" stroke="#E65100" strokeWidth="1" />
-              <rect x="91" y="41" width="4" height="2" rx="0.5" fill="#FFFFFF" />
+                {/* Cinta reflectiva trasera */}
+                <rect x="-3" y="24" width="3" height="22" rx="1" fill="#FFC107" />
 
-              {/* Faros delanteros */}
-              <rect x="113" y="40" width="3" height="7" rx="1" fill="#FFF59D" />
-              <rect x="111" y="47" width="5" height="5" rx="1" fill="#455A64" />
+                {/* Cabina delantera del camión */}
+                <rect x="78" y="18" width="38" height="34" rx="5" fill="url(#truckCabGrad)" stroke="#E65100" strokeWidth="1.5" />
+                
+                {/* Parabrisas y ventana */}
+                <path d="M82 22 L105 22 C109 22 112 25 112 29 L112 35 L82 35 Z" fill="#E1F5FE" stroke="#0288D1" strokeWidth="1" />
+                
+                {/* Línea de puerta y manija */}
+                <line x1="94" y1="35" x2="94" y2="52" stroke="#E65100" strokeWidth="1" />
+                <rect x="91" y="41" width="4" height="2" rx="0.5" fill="#FFFFFF" />
 
-              {/* Ruedas apoyadas exactamente en el pavimento (centro en cy=53, radio 10 -> base en y=63) */}
-              {/* Rueda trasera 1 */}
-              <circle cx="20" cy="53" r="10" fill="#263238" stroke="#102027" strokeWidth="1.5" />
-              <circle cx="20" cy="53" r="5" fill="#CFD8DC" />
+                {/* Faros delanteros */}
+                <rect x="113" y="40" width="3" height="7" rx="1" fill="#FFF59D" />
+                <rect x="111" y="47" width="5" height="5" rx="1" fill="#455A64" />
 
-              {/* Rueda trasera 2 */}
-              <circle cx="44" cy="53" r="10" fill="#263238" stroke="#102027" strokeWidth="1.5" />
-              <circle cx="44" cy="53" r="5" fill="#CFD8DC" />
+                {/* Ruedas apoyadas exactamente en el pavimento (centro en cy=53, radio 10) */}
+                {/* Rueda trasera 1 */}
+                <circle cx="20" cy="53" r="10" fill="#263238" stroke="#102027" strokeWidth="1.5" />
+                <circle cx="20" cy="53" r="5" fill="#CFD8DC" />
 
-              {/* Rueda delantera */}
-              <circle cx="98" cy="53" r="10" fill="#263238" stroke="#102027" strokeWidth="1.5" />
-              <circle cx="98" cy="53" r="5" fill="#CFD8DC" />
+                {/* Rueda trasera 2 */}
+                <circle cx="44" cy="53" r="10" fill="#263238" stroke="#102027" strokeWidth="1.5" />
+                <circle cx="44" cy="53" r="5" fill="#CFD8DC" />
 
-              {/* Rótulo de la etapa 2 */}
+                {/* Rueda delantera */}
+                <circle cx="98" cy="53" r="10" fill="#263238" stroke="#102027" strokeWidth="1.5" />
+                <circle cx="98" cy="53" r="5" fill="#CFD8DC" />
+              </g>
+
+              {/* Rótulo de la etapa 2 en el centro exacto */}
               <circle cx="58" cy="80" r="10" fill="#26A69A" />
               <text x="58" y="84" textAnchor="middle" fill="#FFFFFF" fontSize="11" fontWeight="800">2</text>
               <text x="58" y="100" textAnchor="middle" fill="#145A32" fontSize="12" fontWeight="800" fontFamily="sans-serif">
@@ -216,9 +227,9 @@ export const WhyRecycle: React.FC = () => {
               </text>
             </g>
 
-            {/* Flecha Curva de Flujo 2 (Desde el camión hacia la planta de reciclaje) */}
-            <path className="anim-dash-flow" d="M 525 68 C 595 22, 665 22, 730 68" stroke="#4A90E2" strokeWidth="3" fill="none" strokeDasharray="6 6" />
-            <polygon points="724,58 740,70 722,77" fill="#4A90E2" />
+            {/* Flecha Curva de Flujo 2 (Desde el camión central hacia la planta de reciclaje) */}
+            <path className="anim-dash-flow" d="M 525 68 C 595 25, 665 25, 720 66" stroke="#4A90E2" strokeWidth="3" fill="none" strokeDasharray="6 6" />
+            <polygon points="716,59 728,67 716,75" fill="#4A90E2" />
 
             {/* ================= ETAPA 3: PLANTA DE RECICLAJE & NUEVOS PRODUCTOS ================= */}
             <g transform="translate(735, 0)">

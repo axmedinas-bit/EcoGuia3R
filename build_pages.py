@@ -59,6 +59,14 @@ def init_sqlite_database():
         """, sugerencias_iniciales)
     
     conn.commit()
+    
+    # Exportar dump SQL para respaldo y compatibilidad
+    sql_backup_path = os.path.join("instance", "ecoguia_database.sql")
+    with open(sql_backup_path, "w", encoding="utf-8") as f:
+        for line in conn.iterdump():
+            f.write(f"{line}\n")
+    print(f"📦 Respaldo SQL generado en {sql_backup_path}")
+
     conn.close()
     print(f"✅ Base de datos SQLite verificada en {db_path}")
 
@@ -84,6 +92,14 @@ def build_web_assets():
         with open(dist_index, "r", encoding="utf-8") as src, open(dist_404, "w", encoding="utf-8") as dst:
             dst.write(src.read())
         print("✅ Archivo 404.html generado para compatibilidad con GitHub Pages.")
+
+    # Copiar respaldo SQL a dist/ para descarga directa
+    src_sql = os.path.join("instance", "ecoguia_database.sql")
+    if os.path.exists(src_sql):
+        dst_sql = os.path.join("dist", "ecoguia_database.sql")
+        with open(src_sql, "r", encoding="utf-8") as s, open(dst_sql, "w", encoding="utf-8") as d:
+            d.write(s.read())
+        print("✅ Archivo ecoguia_database.sql copiado a dist/")
 
 if __name__ == "__main__":
     print("=== EcoGuía3R · Pipeline de Construcción Python ===")

@@ -162,14 +162,7 @@ h1, h2, h3, h4, .font-display {
   animation: dashFlow 1.8s linear infinite;
 }
 
-@keyframes truckBob {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-1.5px); }
-}
 
-.anim-truck-bob {
-  animation: truckBob 2.5s ease-in-out infinite;
-}
 
 .anim-bin-1 {
   animation: binFloat1 4.5s ease-in-out infinite;

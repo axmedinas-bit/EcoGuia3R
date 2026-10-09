@@ -1,6 +1,8 @@
 {
-  "name": "Ecoguía - Educación en Reciclaje & SQLite",
+  "name": "EcoGuia3R",
   "description": "Plataforma educativa sobre reciclaje y separación de residuos con SQLite, gestión de sugerencias, panel de administración protegido y despliegue en GitHub Pages.",
   "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }

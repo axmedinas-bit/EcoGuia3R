@@ -41,7 +41,7 @@ jobs:
           cache: 'npm'
 
       - name: Instalar dependencias Web
-        run: npm ci || npm install
+        run: npm install --legacy-peer-deps
 
       - name: Construir proyecto con Python (build_pages.py)
         run: python build_pages.py
