@@ -61,6 +61,12 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   const [newAdminPass, setNewAdminPass] = useState('');
   const [adminStatus, setAdminStatus] = useState<{ success: boolean; message: string } | null>(null);
 
+  // In-app deletion states (replaces window.confirm/alert which get blocked in iframes)
+  const [deletingSugerencia, setDeletingSugerencia] = useState<Sugerencia | null>(null);
+  const [deletingAdmin, setDeletingAdmin] = useState<Administrador | null>(null);
+  const [adminDeleteError, setAdminDeleteError] = useState<string | null>(null);
+  const [feedbackMessage, setFeedbackMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
   const reloadData = () => {
     setSugerencias(sqliteService.getSugerencias());
     setAdministradores(sqliteService.getAdministradores());
@@ -68,9 +74,27 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   };
 
   const handleDelete = (s: Sugerencia) => {
-    if (window.confirm(`¿Confirmas que deseas eliminar permanentemente la sugerencia de "${s.nombre}" (ID #${s.id})?`)) {
-      sqliteService.deleteSugerencia(s.id);
+    setDeletingSugerencia(s);
+  };
+
+  const confirmDeleteSugerencia = () => {
+    if (!deletingSugerencia) return;
+    const ok = sqliteService.deleteSugerencia(deletingSugerencia.id);
+    if (ok) {
+      const deletedName = deletingSugerencia.nombre;
+      const deletedId = deletingSugerencia.id;
+      setDeletingSugerencia(null);
       reloadData();
+      setFeedbackMessage({
+        type: 'success',
+        text: `La sugerencia de "${deletedName}" (#${deletedId}) ha sido eliminada correctamente.`
+      });
+      setTimeout(() => setFeedbackMessage(null), 4000);
+    } else {
+      setFeedbackMessage({
+        type: 'error',
+        text: 'No se pudo eliminar el registro seleccionado.'
+      });
     }
   };
 
@@ -232,13 +256,25 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
 
   // Delete admin
   const handleDeleteAdmin = (admin: Administrador) => {
-    if (window.confirm(`¿Confirmas que deseas retirar el acceso al administrador '${admin.usuario}'?`)) {
-      const res = sqliteService.deleteAdmin(admin.id);
-      if (res.success) {
-        reloadData();
-      } else {
-        alert(res.error || 'No se pudo eliminar el administrador.');
-      }
+    setAdminDeleteError(null);
+    setDeletingAdmin(admin);
+  };
+
+  const confirmDeleteAdmin = () => {
+    if (!deletingAdmin) return;
+    const res = sqliteService.deleteAdmin(deletingAdmin.id);
+    if (res.success) {
+      const username = deletingAdmin.usuario;
+      setDeletingAdmin(null);
+      setAdminDeleteError(null);
+      reloadData();
+      setFeedbackMessage({
+        type: 'success',
+        text: `Se ha retirado el acceso al administrador '${username}' correctamente.`
+      });
+      setTimeout(() => setFeedbackMessage(null), 4000);
+    } else {
+      setAdminDeleteError(res.error || 'No se pudo eliminar el administrador.');
     }
   };
 
@@ -293,6 +329,33 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
             </button>
           </div>
         </div>
+
+        {/* Notificación de acciones (eliminaciones, actualizaciones) */}
+        {feedbackMessage && (
+          <div
+            className={`p-4 rounded-2xl text-sm font-semibold flex items-center justify-between gap-3 shadow-sm border animate-in fade-in duration-200 ${
+              feedbackMessage.type === 'success'
+                ? 'bg-emerald-50 text-emerald-950 border-emerald-300'
+                : 'bg-rose-50 text-rose-950 border-rose-300'
+            }`}
+          >
+            <div className="flex items-center gap-2.5">
+              {feedbackMessage.type === 'success' ? (
+                <CheckCircle2 className="w-5 h-5 text-emerald-700 shrink-0" />
+              ) : (
+                <AlertCircle className="w-5 h-5 text-rose-700 shrink-0" />
+              )}
+              <p>{feedbackMessage.text}</p>
+            </div>
+            <button
+              onClick={() => setFeedbackMessage(null)}
+              className="p-1 rounded-lg hover:bg-black/5 text-current cursor-pointer"
+              title="Cerrar notificación"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        )}
 
         {/* Navigation Tabs */}
         <div className="flex items-center gap-3 border-b border-[#C5DDCB] pb-3 text-sm font-bold">
@@ -468,9 +531,11 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
 
                               {/* Eliminar */}
                               <button
+                                type="button"
                                 onClick={() => handleDelete(s)}
-                                className="p-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 transition-colors cursor-pointer shadow-xs border border-rose-200"
-                                title="Eliminar registro"
+                                className="p-2 rounded-xl bg-rose-50 hover:bg-rose-100 active:scale-95 text-rose-700 transition-all cursor-pointer shadow-xs border border-rose-200"
+                                title={`Eliminar sugerencia #${s.id}`}
+                                aria-label={`Eliminar sugerencia #${s.id} de ${s.nombre}`}
                               >
                                 <Trash2 className="w-4 h-4" />
                               </button>
@@ -992,6 +1057,137 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 4: CONFIRMAR ELIMINACIÓN DE SUGERENCIA (SEGURO PARA IFRAMES) */}
+      {deletingSugerencia && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs"
+          onClick={() => setDeletingSugerencia(null)}
+        >
+          <div
+            className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl border border-rose-200 relative animate-in fade-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setDeletingSugerencia(null)}
+              className="absolute top-5 right-5 p-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 transition-colors cursor-pointer"
+              title="Cerrar ventana"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="flex items-center gap-3.5 mb-4">
+              <div className="w-12 h-12 rounded-2xl bg-rose-100 text-rose-700 flex items-center justify-center shrink-0">
+                <Trash2 className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="font-display font-bold text-lg sm:text-xl text-[#1F2E24]">
+                  ¿Eliminar sugerencia?
+                </h3>
+                <span className="text-xs text-rose-700 font-semibold">
+                  Acción permanente e irreversible
+                </span>
+              </div>
+            </div>
+
+            <p className="text-sm text-[#4A5A4E] mb-4 leading-relaxed">
+              ¿Estás seguro de que deseas eliminar permanentemente el registro de{' '}
+              <strong className="text-[#1F2E24] font-bold">"{deletingSugerencia.nombre}"</strong> (ID #{deletingSugerencia.id})?
+            </p>
+
+            <div className="bg-rose-50/70 border border-rose-200 rounded-2xl p-3.5 mb-5 text-xs text-rose-950 space-y-1">
+              <p className="font-mono text-[11px] text-rose-800 font-semibold">
+                {deletingSugerencia.correo} &bull; {deletingSugerencia.fecha}
+              </p>
+              <p className="italic text-[#1F2E24] line-clamp-3">
+                "{deletingSugerencia.mensaje}"
+              </p>
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setDeletingSugerencia(null)}
+                className="px-4 py-2.5 rounded-full bg-slate-100 hover:bg-slate-200 text-[#1F2E24] text-xs font-bold transition-colors cursor-pointer"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={confirmDeleteSugerencia}
+                className="px-5 py-2.5 rounded-full bg-rose-600 hover:bg-rose-700 active:scale-95 text-white text-xs font-bold transition-all shadow-md hover:shadow-lg flex items-center gap-2 cursor-pointer"
+              >
+                <Trash2 className="w-4 h-4" />
+                <span>Sí, eliminar registro</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 5: CONFIRMAR ELIMINACIÓN DE ADMINISTRADOR */}
+      {deletingAdmin && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs"
+          onClick={() => { setDeletingAdmin(null); setAdminDeleteError(null); }}
+        >
+          <div
+            className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl border border-rose-200 relative animate-in fade-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => { setDeletingAdmin(null); setAdminDeleteError(null); }}
+              className="absolute top-5 right-5 p-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 transition-colors cursor-pointer"
+              title="Cerrar ventana"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="flex items-center gap-3.5 mb-4">
+              <div className="w-12 h-12 rounded-2xl bg-rose-100 text-rose-700 flex items-center justify-center shrink-0">
+                <Trash2 className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="font-display font-bold text-lg sm:text-xl text-[#1F2E24]">
+                  ¿Retirar acceso a administrador?
+                </h3>
+                <span className="text-xs text-rose-700 font-semibold">
+                  Acceso y credenciales revocadas
+                </span>
+              </div>
+            </div>
+
+            {adminDeleteError && (
+              <div className="mb-4 p-3 rounded-xl bg-rose-100 border border-rose-300 text-rose-900 text-xs font-bold">
+                {adminDeleteError}
+              </div>
+            )}
+
+            <p className="text-sm text-[#4A5A4E] mb-5 leading-relaxed">
+              ¿Confirmas que deseas retirar el acceso al administrador{' '}
+              <strong className="text-[#1F2E24] font-bold">'{deletingAdmin.usuario}'</strong> (ID #{deletingAdmin.id})?
+            </p>
+
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => { setDeletingAdmin(null); setAdminDeleteError(null); }}
+                className="px-4 py-2.5 rounded-full bg-slate-100 hover:bg-slate-200 text-[#1F2E24] text-xs font-bold transition-colors cursor-pointer"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={confirmDeleteAdmin}
+                className="px-5 py-2.5 rounded-full bg-rose-600 hover:bg-rose-700 active:scale-95 text-white text-xs font-bold transition-all shadow-md hover:shadow-lg flex items-center gap-2 cursor-pointer"
+              >
+                <Trash2 className="w-4 h-4" />
+                <span>Sí, revocar acceso</span>
+              </button>
+            </div>
           </div>
         </div>
       )}

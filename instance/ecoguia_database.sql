@@ -1,6 +1,6 @@
 -- ==========================================================
 -- EcoGuía3R · Dump de Base de Datos SQLite
--- Generado: 2026-10-10 00:14:30
+-- Generado: 2026-10-10 00:31:20
 -- ==========================================================
 PRAGMA foreign_keys=OFF;
 BEGIN TRANSACTION;
