@@ -1,6 +1,6 @@
 -- ==========================================================
 -- EcoGuía3R · Esquema DDL de Tablas e Índices (SQLite)
--- Generado: 2026-10-10 00:31:20
+-- Generado: 2026-10-10 00:41:44
 -- ==========================================================
 
 CREATE TABLE administradores (

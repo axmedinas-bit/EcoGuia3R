@@ -813,7 +813,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
       {/* MODAL 1: VISUALIZAR SUGERENCIA */}
       {viewingSugerencia && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs"
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
           onClick={() => setViewingSugerencia(null)}
         >
           <div
@@ -898,7 +898,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
       {/* MODAL 2: EDITAR SUGERENCIA */}
       {editingSugerencia && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs"
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
           onClick={() => setEditingSugerencia(null)}
         >
           <div
@@ -995,7 +995,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
       {/* MODAL 3: CAMBIAR CONTRASEÑA DE ADMINISTRADOR */}
       {changingPassAdmin && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs"
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
           onClick={() => setChangingPassAdmin(null)}
         >
           <div
@@ -1064,7 +1064,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
       {/* MODAL 4: CONFIRMAR ELIMINACIÓN DE SUGERENCIA (SEGURO PARA IFRAMES) */}
       {deletingSugerencia && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs"
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
           onClick={() => setDeletingSugerencia(null)}
         >
           <div
@@ -1131,7 +1131,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
       {/* MODAL 5: CONFIRMAR ELIMINACIÓN DE ADMINISTRADOR */}
       {deletingAdmin && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs"
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
           onClick={() => { setDeletingAdmin(null); setAdminDeleteError(null); }}
         >
           <div
