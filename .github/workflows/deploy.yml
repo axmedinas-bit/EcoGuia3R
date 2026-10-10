@@ -43,6 +43,9 @@ jobs:
       - name: Instalar dependencias Web
         run: npm install --legacy-peer-deps
 
+      - name: Ejecutar pruebas unitarias en Python
+        run: python -m unittest discover tests
+
       - name: Construir proyecto con Python (build_pages.py)
         run: python build_pages.py
 

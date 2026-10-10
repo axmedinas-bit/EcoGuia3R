@@ -160,40 +160,46 @@ h1, h2, h3, h4, .font-display {
 
 .anim-dash-flow {
   animation: dashFlow 1.8s linear infinite;
+  will-change: stroke-dashoffset;
 }
-
-
 
 .anim-bin-1 {
   animation: binFloat1 4.5s ease-in-out infinite;
+  will-change: transform;
 }
 
 .anim-bin-2 {
   animation: binFloat2 5s ease-in-out infinite;
   animation-delay: 0.4s;
+  will-change: transform;
 }
 
 .anim-bin-3 {
   animation: binFloat3 4.2s ease-in-out infinite;
   animation-delay: 0.8s;
+  will-change: transform;
 }
 
 .anim-item-hover {
   animation: itemHover 3.2s ease-in-out infinite;
+  will-change: transform;
 }
 
 .anim-aura {
   animation: auraGlow 3.8s ease-in-out infinite;
+  will-change: transform, opacity;
 }
 
 .anim-spin-slow {
   animation: slowSpin 18s linear infinite;
+  will-change: transform;
 }
 
 .brand-leaf {
   display: inline-flex;
   animation: leafDrift 5s ease-in-out infinite;
   transform-origin: center;
+  will-change: transform;
 }
 
 .btn-shine {
@@ -212,3 +218,19 @@ h1, h2, h3, h4, .font-display {
 .btn-shine:hover::before {
   animation: shine 1.1s ease;
 }
+
+/* Optimización para usuarios con preferencia de movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+  .anim-dash-flow,
+  .anim-bin-1,
+  .anim-bin-2,
+  .anim-bin-3,
+  .anim-item-hover,
+  .anim-aura,
+  .anim-spin-slow,
+  .brand-leaf {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+

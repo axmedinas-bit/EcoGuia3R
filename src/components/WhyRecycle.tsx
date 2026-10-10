@@ -163,16 +163,19 @@ export const WhyRecycle: React.FC = () => {
             <polygon points="371,59 383,67 371,75" fill="#4CAF50" />
 
             {/* ================= ETAPA 2: CAMIÓN DE RECOLECCIÓN (CENTRADO EXACTO) ================= */}
-            {/* El camión está posicionado en el centro exacto (X=450, Y=74) sobre el asfalto */}
-            <g transform="translate(392, 74)">
-              {/* Animación suave de desplazamiento vertical SVG nativo sin alterar coordenadas X */}
-              <g>
+            <g id="etapa-2-camion" transform="translate(392, 74)">
+              {/* Animación suave y optimizada de desplazamiento vertical SVG sin alterar coordenadas X */}
+              <g id="truck-body-motion">
                 <animateTransform
                   attributeName="transform"
                   type="translate"
-                  values="0,0; 0,-2; 0,0"
-                  dur="2.5s"
+                  values="0,0; 0,-2.5; 0,0"
+                  keyTimes="0; 0.5; 1"
+                  calcMode="spline"
+                  keySplines="0.42 0 0.58 1; 0.42 0 0.58 1"
+                  dur="2.4s"
                   repeatCount="indefinite"
+                  additive="replace"
                 />
 
                 {/* Sombra de ruedas sobre el asfalto */}

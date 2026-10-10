@@ -11,6 +11,7 @@ interface NavbarProps {
   onGoHome: () => void;
   onSelectSearchResiduo: (item: ResiduoItem) => void;
   sugerenciasCount: number;
+  onOpenPython?: () => void;
 }
 
 const RESIDUOS_DATABASE: ResiduoItem[] = [
@@ -37,6 +38,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onGoHome,
   onSelectSearchResiduo,
   sugerenciasCount,
+  onOpenPython,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -106,6 +108,13 @@ export const Navbar: React.FC<NavbarProps> = ({
           <a href="#sugerencias" className="hover:text-[#CFEF9D] transition-colors py-1 text-sm">
             Buzón ciudadano
           </a>
+          <button
+            onClick={onOpenPython}
+            className="bg-emerald-950/50 hover:bg-emerald-950/80 border border-[#CFEF9D]/50 text-[#CFEF9D] hover:text-white px-3 py-1.5 rounded-full text-xs font-extrabold flex items-center gap-1.5 transition-all shadow-sm cursor-pointer ml-1"
+            title="Ver arquitectura y herramientas en Python"
+          >
+            <span>🐍</span> Python
+          </button>
         </nav>
 
         {/* Search bar & Admin Actions */}
@@ -270,6 +279,15 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               📝 Buzón ciudadano de sugerencias
             </a>
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                onOpenPython?.();
+              }}
+              className="py-2.5 px-3 rounded-xl bg-emerald-950/60 border border-[#CFEF9D]/40 text-[#CFEF9D] font-bold flex items-center gap-2 text-left"
+            >
+              <span>🐍</span> Ecosistema & Backend Python
+            </button>
           </div>
         </div>
       )}

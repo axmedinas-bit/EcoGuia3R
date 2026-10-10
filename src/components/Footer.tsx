@@ -5,12 +5,14 @@ interface FooterProps {
   onOpenLogin: () => void;
   isAdmin: boolean;
   onOpenPanel: () => void;
+  onOpenPython?: () => void;
 }
 
 export const Footer: React.FC<FooterProps> = ({
   onOpenLogin,
   isAdmin,
   onOpenPanel,
+  onOpenPython,
 }) => {
   return (
     <footer className="bg-[#1B4332] text-white/90 pt-16 pb-12 border-t-2 border-emerald-900 shadow-2xl">
@@ -77,6 +79,14 @@ export const Footer: React.FC<FooterProps> = ({
                 <a href="#sugerencias" className="hover:text-[#CFEF9D] transition-colors">
                   Buzón de sugerencias
                 </a>
+              </li>
+              <li>
+                <button
+                  onClick={onOpenPython}
+                  className="hover:text-[#CFEF9D] transition-colors flex items-center gap-1.5 text-left cursor-pointer"
+                >
+                  <span>🐍</span> Backend & Scripts Python
+                </button>
               </li>
             </ul>
           </div>

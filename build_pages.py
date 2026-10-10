@@ -1,17 +1,46 @@
 """
 build_pages.py
-Script de automatización en Python para compilar y preparar EcoGuía3R para GitHub Pages.
-Mantiene sincronizada la base de datos SQLite y genera los artefactos para despliegue estático.
+Pipeline de construcción, análisis y automatización en Python para EcoGuía3R.
+Mantiene sincronizada la base de datos SQLite, ejecuta pruebas unitarias,
+genera reportes ambientales y prepara los artefactos para GitHub Pages.
 """
 
 import os
 import sys
+import json
 import sqlite3
 import subprocess
+from pathlib import Path
+
+# Agregar directorio actual para importar módulos de la app
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
+
+from app.recycling_logic import (
+    obtener_estadisticas_db,
+    exportar_sugerencias_json,
+    exportar_sugerencias_csv,
+    exportar_database_sql,
+    exportar_schema_sql,
+    REGLAS_RESIDUOS
+)
+from report_generator import generar_reporte
+
+
+def ejecutar_pruebas_unitarias():
+    """Ejecuta la suite de pruebas unitarias en Python antes de construir."""
+    print("🧪 Ejecutando pruebas unitarias en Python (unittest)...")
+    res = subprocess.run([sys.executable, "-m", "unittest", "discover", "tests"], capture_output=True, text=True)
+    if res.returncode != 0:
+        print("❌ Fallaron las pruebas unitarias en Python:")
+        print(res.stderr)
+        sys.exit(1)
+    print("✅ Todas las pruebas unitarias en Python pasaron exitosamente.")
+
 
 def init_sqlite_database():
-    """Inicializa la base de datos SQLite instance/app.db con el esquema de Ecoguía."""
+    """Inicializa la base de datos SQLite instance/app.db con el esquema de Ecoguía y genera volcados SQL."""
     os.makedirs("instance", exist_ok=True)
+    os.makedirs("public", exist_ok=True)
     db_path = os.path.join("instance", "app.db")
     
     conn = sqlite3.connect(db_path)
@@ -59,16 +88,21 @@ def init_sqlite_database():
         """, sugerencias_iniciales)
     
     conn.commit()
-    
-    # Exportar dump SQL para respaldo y compatibilidad
-    sql_backup_path = os.path.join("instance", "ecoguia_database.sql")
-    with open(sql_backup_path, "w", encoding="utf-8") as f:
-        for line in conn.iterdump():
-            f.write(f"{line}\n")
-    print(f"📦 Respaldo SQL generado en {sql_backup_path}")
-
     conn.close()
     print(f"✅ Base de datos SQLite verificada en {db_path}")
+
+    # Generar volcados SQL completos (datos + estructura) y de esquema DDL
+    exportar_database_sql(db_path, "instance/ecoguia_database.sql")
+    exportar_schema_sql(db_path, "instance/ecoguia_schema.sql")
+    
+    # Exportar también en public/ para que Vite los incluya en el empaquetado
+    exportar_database_sql(db_path, "public/ecoguia_database.sql")
+    exportar_schema_sql(db_path, "public/ecoguia_schema.sql")
+    print("📦 Respaldo SQL completo y esquema DDL exportados en instance/ y public/")
+
+    # Exportar CSV en instance/
+    exportar_sugerencias_csv(db_path, "instance/sugerencias_export.csv")
+
 
 def build_web_assets():
     """Ejecuta el build de Vite para generar los archivos estáticos en dist/."""
@@ -93,16 +127,40 @@ def build_web_assets():
             dst.write(src.read())
         print("✅ Archivo 404.html generado para compatibilidad con GitHub Pages.")
 
-    # Copiar respaldo SQL a dist/ para descarga directa
-    src_sql = os.path.join("instance", "ecoguia_database.sql")
-    if os.path.exists(src_sql):
-        dst_sql = os.path.join("dist", "ecoguia_database.sql")
-        with open(src_sql, "r", encoding="utf-8") as s, open(dst_sql, "w", encoding="utf-8") as d:
-            d.write(s.read())
-        print("✅ Archivo ecoguia_database.sql copiado a dist/")
+    # Copiar respaldo SQL completo y esquema DDL a dist/ para descarga directa
+    for sql_file in ["ecoguia_database.sql", "ecoguia_schema.sql"]:
+        src_sql = os.path.join("instance", sql_file)
+        if os.path.exists(src_sql):
+            dst_sql = os.path.join("dist", sql_file)
+            with open(src_sql, "r", encoding="utf-8") as s, open(dst_sql, "w", encoding="utf-8") as d:
+                d.write(s.read())
+            print(f"✅ Archivo {sql_file} copiado a dist/")
+
+    # Exportar datos analíticos estáticos JSON a public/ y dist/
+    exportar_sugerencias_json("instance/app.db", "public/api_sugerencias.json")
+    exportar_sugerencias_json("instance/app.db", "dist/api_sugerencias.json")
+    
+    # Exportar reglas en JSON para acceso estático
+    with open("public/api_residuos.json", "w", encoding="utf-8") as f:
+        json.dump({"exito": True, "reglas": REGLAS_RESIDUOS}, f, ensure_ascii=False, indent=2)
+    with open("dist/api_residuos.json", "w", encoding="utf-8") as f:
+        json.dump({"exito": True, "reglas": REGLAS_RESIDUOS}, f, ensure_ascii=False, indent=2)
+    print("✅ API estática JSON exportada a dist/ y public/ (api_sugerencias.json, api_residuos.json)")
+
+    # Generar reporte ambiental HTML en dist/ y copiar a public/
+    generar_reporte()
+    dist_rep = os.path.join("dist", "reporte_ambiental.html")
+    pub_rep = os.path.join("public", "reporte_ambiental.html")
+    if os.path.exists(dist_rep):
+        with open(dist_rep, "r", encoding="utf-8") as src, open(pub_rep, "w", encoding="utf-8") as dst:
+            dst.write(src.read())
+
 
 if __name__ == "__main__":
-    print("=== EcoGuía3R · Pipeline de Construcción Python ===")
+    print("\n" + "="*55)
+    print("=== 🌱 EcoGuía3R · Pipeline de Construcción Python ===")
+    print("="*55)
+    ejecutar_pruebas_unitarias()
     init_sqlite_database()
     build_web_assets()
-    print("🎉 Proyecto listo para publicación en GitHub Pages.")
+    print("🎉 Pipeline completado con éxito. Proyecto listo para GitHub Pages.\n")

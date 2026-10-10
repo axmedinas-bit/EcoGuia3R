@@ -21,7 +21,8 @@ import {
   MessageSquare,
   ShieldCheck,
   UserCheck,
-  Database
+  Database,
+  FileCode
 } from 'lucide-react';
 
 interface AdminPanelProps {
@@ -38,7 +39,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   const [sugerencias, setSugerencias] = useState<Sugerencia[]>(sqliteService.getSugerencias());
   const [administradores, setAdministradores] = useState<Administrador[]>(sqliteService.getAdministradores());
   const [searchTerm, setSearchTerm] = useState('');
-  const [activeTab, setActiveTab] = useState<'sugerencias' | 'administradores'>('sugerencias');
+  const [activeTab, setActiveTab] = useState<'sugerencias' | 'administradores' | 'python'>('sugerencias');
 
   // Modals state
   const [viewingSugerencia, setViewingSugerencia] = useState<Sugerencia | null>(null);
@@ -328,6 +329,23 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
               {administradores.length}
             </span>
           </button>
+
+          <button
+            onClick={() => setActiveTab('python')}
+            className={`px-6 py-3 rounded-2xl transition-all cursor-pointer flex items-center gap-2.5 ${
+              activeTab === 'python'
+                ? 'bg-[#155E38] text-white shadow-lg'
+                : 'text-[#1F2E24] hover:bg-white/80 bg-white/50 border border-[#C5DDCB] shadow-xs'
+            }`}
+          >
+            <span className="text-base">🐍</span>
+            <span>Backend & Scripts Python</span>
+            <span className={`px-2.5 py-0.5 rounded-full text-xs font-black ${
+              activeTab === 'python' ? 'bg-white text-[#155E38]' : 'bg-emerald-100 text-[#174D32]'
+            }`}>
+              6 scripts
+            </span>
+          </button>
         </div>
 
         {/* TAB 1: SUGERENCIAS */}
@@ -597,6 +615,129 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                   Guardar Nuevo Administrador
                 </button>
               </form>
+            </div>
+
+          </div>
+        )}
+
+        {/* TAB 3: BACKEND & SCRIPTS PYTHON */}
+        {activeTab === 'python' && (
+          <div className="space-y-6">
+            
+            {/* Header Card */}
+            <div className="p-6 rounded-3xl bg-gradient-to-r from-[#174D32] to-[#0A2618] text-white border border-[#C5DDCB]/30 shadow-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl">🐍</span>
+                  <h3 className="font-display font-bold text-xl text-white">Módulos y Backend en Python</h3>
+                  <span className="bg-[#CFEF9D] text-[#174D32] text-xs font-black px-2.5 py-0.5 rounded-full uppercase">
+                    100% Nativo
+                  </span>
+                </div>
+                <p className="text-xs sm:text-sm text-emerald-100/80 mt-1 max-w-2xl leading-relaxed">
+                  El proyecto cuenta con un ecosistema completo en Python para terminal, servidor web sin librerías externas, 
+                  algoritmos de clasificación según Resolución 2184, suite de pruebas y scripts de exportación.
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <a
+                  href="./ecoguia_database.sql"
+                  download="ecoguia_database.sql"
+                  className="bg-white/10 hover:bg-white/20 text-[#CFEF9D] font-bold text-xs px-3.5 py-2 rounded-xl border border-white/20 transition-all flex items-center gap-1.5 shadow-sm"
+                  title="Descargar volcado SQL completo con datos"
+                >
+                  <Database className="w-3.5 h-3.5" /> Dump SQL
+                </a>
+                <a
+                  href="./ecoguia_schema.sql"
+                  download="ecoguia_schema.sql"
+                  className="bg-white/10 hover:bg-white/20 text-white font-bold text-xs px-3 py-2 rounded-xl border border-white/20 transition-all flex items-center gap-1.5 shadow-sm"
+                  title="Descargar esquema DDL de tablas"
+                >
+                  <FileCode className="w-3.5 h-3.5" /> Esquema DDL
+                </a>
+                <a
+                  href="./reporte_ambiental.html"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="bg-[#CFEF9D] hover:bg-emerald-300 text-[#174D32] font-bold text-xs px-3.5 py-2 rounded-xl transition-all flex items-center gap-1.5 shadow-sm"
+                >
+                  📄 Reporte HTML
+                </a>
+              </div>
+            </div>
+
+            {/* Módulos Python */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-white p-5 rounded-2xl border border-[#C5DDCB] shadow-sm space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono font-bold text-xs text-[#174D32] bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">
+                    server.py
+                  </span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                </div>
+                <h4 className="font-bold text-sm text-[#1F2E24]">Servidor HTTP / REST</h4>
+                <p className="text-xs text-[#4A5A4E] leading-relaxed">
+                  Servidor HTTP nativo con rutas <code className="bg-emerald-50 text-emerald-900 px-1 py-0.5 rounded">/api/sugerencias</code> y <code className="bg-emerald-50 text-emerald-900 px-1 py-0.5 rounded">/api/clasificar</code>. No requiere pip.
+                </p>
+                <div className="bg-slate-900 text-emerald-400 font-mono text-[11px] p-2 rounded-lg mt-2">
+                  $ python3 server.py
+                </div>
+              </div>
+
+              <div className="bg-white p-5 rounded-2xl border border-[#C5DDCB] shadow-sm space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono font-bold text-xs text-teal-800 bg-teal-50 px-2.5 py-1 rounded-lg border border-teal-200">
+                    ecoguia_cli.py
+                  </span>
+                  <span className="text-xs font-bold text-teal-700">Terminal CLI</span>
+                </div>
+                <h4 className="font-bold text-sm text-[#1F2E24]">Consola Interactiva</h4>
+                <p className="text-xs text-[#4A5A4E] leading-relaxed">
+                  Herramienta interactiva con menús para terminal que permite clasificar residuos, listar sugerencias y calcular huella ecológica.
+                </p>
+                <div className="bg-slate-900 text-teal-400 font-mono text-[11px] p-2 rounded-lg mt-2">
+                  $ python3 ecoguia_cli.py --menu
+                </div>
+              </div>
+
+              <div className="bg-white p-5 rounded-2xl border border-[#C5DDCB] shadow-sm space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono font-bold text-xs text-sky-800 bg-sky-50 px-2.5 py-1 rounded-lg border border-sky-200">
+                    tests/test_basic.py
+                  </span>
+                  <span className="text-xs font-bold text-emerald-700">7 Pruebas OK</span>
+                </div>
+                <h4 className="font-bold text-sm text-[#1F2E24]">Suite de Pruebas</h4>
+                <p className="text-xs text-[#4A5A4E] leading-relaxed">
+                  Pruebas automatizadas con <code className="bg-sky-50 text-sky-900 px-1 py-0.5 rounded">unittest</code> que verifican clasificación léxica, SQLite y cálculos de impacto ambiental.
+                </p>
+                <div className="bg-slate-900 text-sky-400 font-mono text-[11px] p-2 rounded-lg mt-2">
+                  $ python3 -m unittest discover tests
+                </div>
+              </div>
+            </div>
+
+            {/* Pipeline & Utilidades */}
+            <div className="bg-white p-6 rounded-3xl border border-[#C5DDCB] shadow-sm space-y-4">
+              <h4 className="font-display font-bold text-base text-[#1F2E24]">
+                🛠️ Pipeline de Automatización y Reportes en Python
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-[#4A5A4E]">
+                <div className="p-4 rounded-2xl bg-emerald-50/50 border border-emerald-100 space-y-2">
+                  <p className="font-bold text-sm text-[#174D32]">🚀 build_pages.py</p>
+                  <p className="leading-relaxed">
+                    Script integral de compilación que ejecuta las pruebas unitarias, valida la integridad de la base SQLite, 
+                    exporta respaldos SQL y JSON (<code className="bg-white px-1 py-0.5 rounded">dist/api_sugerencias.json</code>), y genera los artefactos para GitHub Pages.
+                  </p>
+                </div>
+                <div className="p-4 rounded-2xl bg-teal-50/50 border border-teal-100 space-y-2">
+                  <p className="font-bold text-sm text-teal-900">📊 report_generator.py</p>
+                  <p className="leading-relaxed">
+                    Módulo de analítica en Python que procesa las métricas de reciclaje en origen y genera informes en Markdown (<code className="bg-white px-1 py-0.5 rounded">instance/reporte_ambiental.md</code>) e informe web HTML.
+                  </p>
+                </div>
+              </div>
             </div>
 
           </div>

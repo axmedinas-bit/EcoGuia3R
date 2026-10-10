@@ -1,121 +1,159 @@
 # EcoGuía3R 🌱♻️
 
-> **Plataforma educativa interactiva sobre reciclaje, separación en la fuente y gestión comunitaria de residuos, con base de datos SQLite, pipeline de automatización en Python y despliegue automático en GitHub Pages.**
+> **Plataforma educativa interactiva sobre reciclaje, separación en la fuente y gestión comunitaria de residuos, con backend y herramientas en Python, base de datos SQLite y despliegue automático en GitHub Pages.**
 
 ---
 
-## 🌟 Características Principales
+## 🐍 Ecosistema y Arquitectura en Python
 
-- **Clasificación por Colores (Resolución Colombiana 2184):**
-  - ⚪ **Blanco:** Residuos aprovechables limpios y secos (plástico, vidrio, cartón, papel, metal).
-  - 🟢 **Verde:** Residuos orgánicos aprovechables (restos de comida, cáscaras, podas).
-  - ⚫ **Negro:** Residuos no aprovechables (papel higiénico, servilletas usadas, papeles metalizados).
-- **Simulador Interactivo de Clasificación:** Juego pedagógico en tiempo real para practicar el depósito de residuos en sus respectivos contenedores.
-- **Canal Comunitario de Sugerencias:** Formulario para que la comunidad registre ideas, inquietudes y puntos de reciclaje.
-- **Panel de Administración Protegido:**
-  - Edición y eliminación de sugerencias.
-  - Exportación de la base de datos a **Excel (.xlsx/.csv)** y script **SQL (.sql)**.
-  - Gestión de cuentas de administradores con contraseñas cifradas en SHA-256.
-  - Visualización del esquema relacional SQLite.
-- **Pipeline de Python (`build_pages.py`):**
-  - Automatiza la creación, verificación y respaldo de la base de datos SQLite (`instance/app.db`).
-  - Genera el dump SQL (`instance/ecoguia_database.sql`).
-  - Compila los recursos web con rutas relativas (`base: './'`), archivo `.nojekyll` y fallback `404.html` para compatibilidad total con GitHub Pages.
+EcoGuía3R integra un ecosistema robusto en **Python 3** para gestión de datos, clasificación inteligente de residuos y utilidades de servidor y terminal:
+
+1. **`server.py` — Servidor Web y API REST Nativo en Python:**
+   - Construido 100% sobre la biblioteca estándar (`http.server`, `sqlite3`, `json`).
+   - **No requiere dependencias externas ni `pip install`**.
+   - Expone endpoints REST en tiempo real:
+     - `GET  /api/status` : Estado del motor Python y plataforma.
+     - `GET  /api/sugerencias` : Lista sugerencias almacenadas en SQLite.
+     - `POST /api/sugerencias` : Registra sugerencias ciudadanas.
+     - `POST /api/clasificar` : Algoritmo de clasificación de residuos según Resolución 2184.
+     - `GET  /api/estadisticas` : Métricas analíticas de la base de datos.
+     - `GET  /api/dump-sql` : Descarga directa del volcado SQL.
+
+2. **`ecoguia_cli.py` — Consola Interactiva (CLI) en Python:**
+   - Interfaz interactiva de terminal con menús y arte ASCII.
+   - Modos de ejecución rápida por banderas:
+     - `python3 ecoguia_cli.py --menu` : Menú interactivo completo.
+     - `python3 ecoguia_cli.py --clasificar "botella de vidrio"` : Clasifica un residuo al instante.
+     - `python3 ecoguia_cli.py --listar` : Muestra las sugerencias guardadas en SQLite.
+     - `python3 ecoguia_cli.py --calculadora 15 "plastico"` : Calcula CO₂ y agua ahorrada.
+     - `python3 ecoguia_cli.py --exportar-json` : Exporta la base de datos a JSON.
+     - `python3 ecoguia_cli.py --exportar-csv` : Exporta a archivo CSV.
+
+3. **`app/recycling_logic.py` — Algoritmos de Negocio y Clasificación:**
+   - Normalización léxica y análisis con expresiones regulares.
+   - Mapeo de la Resolución 2184 de 2019:
+     - ⚪ **Blanco:** Aprovechables limpios (plásticos, vidrios, metales, papel, cartón).
+     - 🟢 **Verde:** Orgánicos aprovechables (restos de alimentos, podas, cáscaras, compostaje).
+     - ⚫ **Negro:** No aprovechables (papel higiénico, servilletas, empaques metalizados, icopor).
+     - 🔴 **Rojo:** Residuos peligrosos y posconsumo (pilas, baterías, medicamentos, luminarias).
+   - Factores de conversión ambiental para calcular reducción de huella de carbono y preservación de árboles.
+
+4. **`report_generator.py` — Generador de Informes Ambientales:**
+   - Analiza los registros comunitarios y genera automáticamente informes ejecutivos en Markdown (`instance/reporte_ambiental.md`) y HTML (`dist/reporte_ambiental.html`).
+
+5. **`tests/test_basic.py` — Suite de Pruebas Unitarias:**
+   - 7 pruebas unitarias construidas con el módulo nativo `unittest`.
+   - Verifica persistencia SQLite, clasificación léxica, cálculos de ahorro y exportación de archivos.
+   - Ejecución: `python3 -m unittest discover tests`.
+
+6. **`build_pages.py` — Pipeline de Integración y Construcción:**
+   - Ejecuta las pruebas unitarias en Python antes de construir.
+   - Verifica e inicializa la base de datos `instance/app.db`.
+   - Genera respaldos en SQL (`instance/ecoguia_database.sql`) y API estática en JSON.
+   - Compila la aplicación frontend para GitHub Pages.
+
+---
+
+## 💻 Comandos Principales de Python
+
+```bash
+# Iniciar servidor web nativo en Python (Puerto 5000):
+python3 server.py
+
+# Iniciar consola interactiva (CLI):
+python3 ecoguia_cli.py --menu
+
+# Clasificar un residuo desde la terminal:
+python3 ecoguia_cli.py --clasificar "cáscara de plátano"
+
+# Ejecutar las pruebas unitarias:
+python3 -m unittest discover tests
+
+# Generar informe ambiental:
+python3 report_generator.py
+
+# Compilar para producción y GitHub Pages:
+python3 build_pages.py
+```
 
 ---
 
 ## 🚀 Despliegue en GitHub Pages
 
-Este repositorio incluye un flujo de trabajo de GitHub Actions en `.github/workflows/deploy.yml` completamente configurado.
+Este repositorio incluye un flujo de trabajo de GitHub Actions en `.github/workflows/deploy.yml` completamente configurado con soporte para Python y Node.js.
 
-### Pasos para Activar GitHub Pages en tu Repositorio:
+### Pasos para Activar GitHub Pages:
 
-1. Sube este repositorio a GitHub:
+1. Sube este repositorio a tu cuenta de GitHub:
    ```bash
    git init
    git add .
-   git commit -m "feat: EcoGuía3R compatible con GitHub Pages"
+   git commit -m "feat: EcoGuía3R con backend Python y GitHub Pages"
    git branch -M main
    git remote add origin https://github.com/TU-USUARIO/EcoGuia3R.git
    git push -u origin main
    ```
 
 2. En la página de tu repositorio en GitHub:
-   - Ve a la pestaña **Settings** (Configuración).
-   - En el menú lateral izquierdo, selecciona **Pages**.
-   - En la sección **Build and deployment** -> **Source**, selecciona:
-     👉 **GitHub Actions**
-   
-3. ¡Listo! Cada vez que hagas `git push` a `main` o `master`, GitHub Actions ejecutará automáticamente:
+   - Ve a **Settings** (Configuración) -> pestaña **Pages**.
+   - En **Build and deployment** -> **Source**, selecciona: **GitHub Actions**.
+
+3. Cada vez que hagas `git push` a `main` o `master`, GitHub Actions ejecutará automáticamente:
    - Configuración de Python 3.10 y Node.js 20.
-   - `python build_pages.py` para sincronizar SQLite y compilar el proyecto.
-   - Despliegue inmediato en tu URL:
-     `https://TU-USUARIO.github.io/EcoGuia3R/`
+   - Ejecución de pruebas unitarias (`python -m unittest discover tests`).
+   - `python build_pages.py` para compilar y preparar los artefactos.
+   - Despliegue en: `https://TU-USUARIO.github.io/EcoGuia3R/`.
 
 ---
 
-## 💻 Ejecución y Compilación Local
+## 🔐 Credenciales del Administrador
 
-### Requisitos Previos:
-- **Python 3.10+**
-- **Node.js 18+** / npm
-
-### Compilar y Preparar para Producción con Python:
-```bash
-# 1. Instalar dependencias Python (opcional para Flask/SQLite)
-pip install -r requirements.txt
-
-# 2. Instalar dependencias web
-npm install --legacy-peer-deps
-
-# 3. Ejecutar el pipeline de construcción de Python
-python build_pages.py
-```
-El comando generará la carpeta `dist/` lista para ser servida por cualquier servidor web o GitHub Pages.
-
-### Modo Desarrollo:
-```bash
-npm run dev
-```
-Abre tu navegador en `http://localhost:3000`.
-
----
-
-## 🔐 Credenciales del Panel de Administrador
-
-Para acceder al apartado de administradores desde la web:
+Para acceder al apartado administrativo desde la interfaz:
 - **Usuario:** `admin`
 - **Contraseña:** `admin123`
 
-*(Puedes cambiar la contraseña o agregar nuevos administradores directamente desde el panel).*
+*(Puedes cambiar la contraseña o agregar nuevos administradores desde el panel).*
 
 ---
 
-## 📁 Estructura del Repositorio
+## 📁 Estructura del Proyecto
 
 ```text
 EcoGuia3R/
 ├── .github/
 │   └── workflows/
-│       └── deploy.yml          # Automatización de despliegue en GitHub Pages
-├── app/                        # Módulo Flask y CLI de SQLite
-│   ├── tables.py
-│   └── routes.py
+│       └── deploy.yml          # Flujo de GitHub Actions (Python + Web)
+├── app/
+│   ├── recycling_logic.py      # Lógica de clasificación y cálculos ambientales
+│   ├── tables.py               # Definición de tablas SQLite
+│   ├── routes.py               # Rutas y API REST de Flask
+│   ├── db.py                   # Conexión SQLite
+│   └── cli.py                  # Comandos de Flask CLI
+├── tests/
+│   └── test_basic.py           # 7 pruebas unitarias con unittest
 ├── instance/
 │   ├── app.db                  # Base de datos SQLite
-│   └── ecoguia_database.sql    # Volcado SQL de respaldo
+│   ├── ecoguia_database.sql    # Volcado SQL de respaldo
+│   ├── sugerencias_export.csv  # Exportación en CSV
+│   └── reporte_ambiental.md    # Reporte ambiental en Markdown
 ├── public/
 │   ├── favicon.svg             # Favicon ecológico
-│   ├── robots.txt              # Configuración de indexación
-│   └── .nojekyll               # Evita que GitHub Pages omita archivos con guión bajo
-├── src/                        # Código fuente de la interfaz React + Tailwind CSS
-│   ├── components/             # Componentes modulares (Hero, Bins, Admin, etc.)
-│   ├── db/
-│   │   └── sqlite.ts           # Servicio cliente SQLite y gestión de sesiones
+│   ├── robots.txt              # Reglas de rastreo web
+│   └── .nojekyll               # Desactiva Jekyll en GitHub Pages
+├── src/                        # Código fuente React + Tailwind CSS
+│   ├── components/             # Componentes de la interfaz
+│   │   ├── PythonModal.tsx     # Modal del ecosistema Python
+│   │   ├── AdminPanel.tsx      # Panel de administración con pestaña Python
+│   │   ├── WhyRecycle.tsx      # Sección ilustrada centrada
+│   │   └── ...
 │   └── App.tsx
-├── build_pages.py              # Script Python de build y verificación para GitHub Pages
-├── index.html                  # Plantilla HTML con metadatos SEO y OpenGraph
-├── vite.config.ts              # Configuración de empaquetado con rutas relativas (base: './')
+├── server.py                   # Servidor HTTP nativo y API REST en Python
+├── ecoguia_cli.py              # Consola CLI interactiva para terminal
+├── report_generator.py         # Generador de informes ambientales
+├── build_pages.py              # Pipeline de construcción y pruebas
+├── main.py                     # Entry point alternativo de Flask
+├── requirements.txt            # Dependencias opcionales de Python
+├── vite.config.ts              # Configuración Vite con rutas relativas (base: './')
 └── package.json
 ```
 

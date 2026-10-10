@@ -2,19 +2,31 @@
   "name": "ecoguia3r",
   "private": true,
   "version": "1.0.0",
+  "description": "Plataforma educativa sobre separación en la fuente y reciclaje con SQLite, exportación estática para GitHub Pages y utilidades Python",
+  "keywords": [
+    "reciclaje",
+    "educacion-ambiental",
+    "sqlite",
+    "python",
+    "github-pages",
+    "react",
+    "vite"
+  ],
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "dev": "vite --port=3000 --host=0.0.0.0",
     "build": "vite build",
     "build:pages": "python3 build_pages.py",
+    "dump:sql": "python3 -c \"from app.recycling_logic import exportar_database_sql, exportar_schema_sql; exportar_database_sql(); exportar_schema_sql()\"",
+    "test:python": "python3 -m unittest discover tests",
     "preview": "vite preview",
-    "clean": "rm -rf dist server.js",
+    "clean": "rm -rf dist server.js instance/*.sql public/*.sql",
     "lint": "tsc --noEmit"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
     "@tailwindcss/vite": "^4.3.3",
-    "@types/sql.js": "^1.4.11",
     "@vitejs/plugin-react": "^6.1.1",
     "dotenv": "^17.2.3",
     "express": "^4.21.2",
@@ -26,14 +38,15 @@
     "vite": "^8.3.0"
   },
   "devDependencies": {
+    "@types/express": "^4.17.21",
     "@types/node": "^22.14.0",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
+    "@types/sql.js": "^1.4.11",
     "autoprefixer": "^10.4.21",
     "esbuild": "^0.25.0",
     "tailwindcss": "^4.3.3",
     "tsx": "^4.21.0",
-    "typescript": "^7.0.2",
-    "@types/express": "^4.17.21"
+    "typescript": "^7.0.2"
   }
 }

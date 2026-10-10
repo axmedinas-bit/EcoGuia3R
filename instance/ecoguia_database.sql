@@ -1,3 +1,8 @@
+-- ==========================================================
+-- EcoGuía3R · Dump de Base de Datos SQLite
+-- Generado: 2026-10-10 00:14:30
+-- ==========================================================
+PRAGMA foreign_keys=OFF;
 BEGIN TRANSACTION;
 CREATE TABLE administradores (
             id INTEGER PRIMARY KEY AUTOINCREMENT,

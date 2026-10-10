@@ -1,0 +1,30 @@
+{
+  "estado": "activo",
+  "ruta_db": "/app/applet/instance/app.db",
+  "total_sugerencias": 3,
+  "total_administradores": 1,
+  "ultimas_sugerencias": [
+    {
+      "id": 3,
+      "nombre": "Valentina Castro",
+      "correo": "valen.castro@gmail.com",
+      "mensaje": "Talleres comunitarios de compostaje para aprovechar la caneca verde.",
+      "fecha": "2026-10-09 00:59:10"
+    },
+    {
+      "id": 2,
+      "nombre": "Carlos Rojas",
+      "correo": "carlos.rojas@udea.edu.co",
+      "mensaje": "Agregar infografías descargables para las zonas comunes de conjuntos residenciales.",
+      "fecha": "2026-10-09 00:59:10"
+    },
+    {
+      "id": 1,
+      "nombre": "María Gómez",
+      "correo": "maria.gomez@eco.co",
+      "mensaje": "Instalar puntos limpios de pilas y bombillos posconsumo en los parques.",
+      "fecha": "2026-10-09 00:59:10"
+    }
+  ],
+  "fecha_consulta": "2026-10-10T00:14:31.897855"
+}

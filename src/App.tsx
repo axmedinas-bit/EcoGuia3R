@@ -9,6 +9,7 @@ import { WasteGame } from './components/WasteGame';
 import { SuggestionsForm } from './components/SuggestionsForm';
 import { AdminPanel } from './components/AdminPanel';
 import { LoginModal } from './components/LoginModal';
+import { PythonModal } from './components/PythonModal';
 import { Footer } from './components/Footer';
 import { sqliteService } from './db/sqlite';
 import { ResiduoItem } from './types';
@@ -20,6 +21,7 @@ export default function App() {
   });
   const [activeView, setActiveView] = useState<'home' | 'panel'>('home');
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [isPythonModalOpen, setIsPythonModalOpen] = useState(false);
   const [sugerenciasCount, setSugerenciasCount] = useState<number>(() => {
     return sqliteService.getSugerencias().length;
   });
@@ -98,6 +100,7 @@ export default function App() {
         onGoHome={() => setActiveView('home')}
         onSelectSearchResiduo={handleSelectSearchResiduo}
         sugerenciasCount={sugerenciasCount}
+        onOpenPython={() => setIsPythonModalOpen(true)}
       />
 
       {/* Main Content Router */}
@@ -129,6 +132,7 @@ export default function App() {
         onOpenLogin={() => setIsLoginOpen(true)}
         isAdmin={isAdmin}
         onOpenPanel={() => setActiveView('panel')}
+        onOpenPython={() => setIsPythonModalOpen(true)}
       />
 
       {/* Login Modal */}
@@ -136,6 +140,12 @@ export default function App() {
         isOpen={isLoginOpen}
         onClose={() => setIsLoginOpen(false)}
         onLoginSuccess={handleLoginSuccess}
+      />
+
+      {/* Python Ecosystem Modal */}
+      <PythonModal
+        isOpen={isPythonModalOpen}
+        onClose={() => setIsPythonModalOpen(false)}
       />
     </div>
   );
